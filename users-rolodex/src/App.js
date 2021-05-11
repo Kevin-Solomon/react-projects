@@ -1,25 +1,34 @@
-import logo from './logo.svg';
 import './App.css';
+import InputField from '../src/components/InputField/InputField'
+import React, { Component } from 'react'
+import CardList from './components/CardList/CardList';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      users: [],
+      inputField:''
+    }
+  }
+  componentDidMount() {
+    fetch('https://randomuser.me/api/?results=12')
+      .then(response=>response.json())
+      .then(data=>this.setState({users : data.results},()=>console.log(this.state.users[0].login.uuid)))
+    
+  }
+  
+  render() {
+    const {users,inputField} = this.state;
+    const filteredUsers = users.filter(user => user.name.first.toLowerCase().includes(inputField.toLowerCase()))
+    return (
+      <div>
+        <div className="intro">Search For User</div>
+        <InputField placeholder="search" changeHandler={(e) => this.setState({inputField:e.target.value})}></InputField>
+        <CardList users={filteredUsers}/>
+      </div>
+    )
+  }
 }
 
-export default App;
+
